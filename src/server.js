@@ -1,9 +1,12 @@
 const express = require("express");
-const routes = require("./routes");
-
 const app = express();
+const routes = require("./routes/routes");
+const port= 3333;
 
+// middlewares
 app.use(express.json());
+
+// routers
 app.use(routes);
 
-app.listen(3333,()=> (console.log("Rodando api Pit")));
+app.listen(port,()=> (console.log("Rodando api Pit")));
