@@ -8,7 +8,9 @@ exports.up = function (knex) {
         table.string('nome').notNullable();
         table.string('whatsApp').notNullable();
         table.string('email').notNullable();
-        table.string('formação').notNullable();
+        table.string('formacao').notNullable();
+        table.string('titulacao').notNullable();
+        table.tinyint('regime_trabalho').notNullable();
     });
 };
 
