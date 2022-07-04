@@ -1,21 +1,31 @@
+const { compare } = require('bcryptjs');
+const { sign } = require('jsonwebtoken')
 const connection = require('../database/connection');
-
-const login = async(request, response) => {
-    const { email } = request.body;
-
-    const user = await connection('users')
-        .where('email', email)
-        .select('nome')
-        .first();
-
-    if (user) {
-        return response.json(user);
-    };
-
-    return response.json({ error: 'usuario nao encontrado'});
-
-};
+require('dotenv').config();
 
 module.exports = {
-    login
+    async create(request, response) {
+        const { chapa, password } = request.body
+
+        const user = await connection('users')
+            .where('chapa', chapa).andWhere('email_verificado', 1).first()
+
+        if (!user) {
+            return response.status(400).json({ error: "Usuario ainda não foi verificado" })
+        }
+        const passwordMach = await compare(password, user.password);
+
+        if (!passwordMach) {
+            return response.status(400).json({ error: "Email/senha incorreto" })
+        }
+
+        const token = sign({
+            chapa: user.chapa,
+        }, `${process.env.CHAVE_TOKEN}`, {
+            expiresIn: '1d'
+        });
+
+
+        return response.json(token)
+    }
 }
